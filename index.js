@@ -86,9 +86,6 @@ class Stats {
         get: () => progress[key]
       })
     }
-
-    Object.seal(this)
-    Object.freeze(this)
   }
 
   /**

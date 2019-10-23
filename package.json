@@ -1,0 +1,38 @@
+{
+  "name": "hypercore-block-progress",
+  "version": "0.0.0",
+  "description": "Track the block download progress of a Hypercore feed.",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc tape test.js"
+  },
+  "keywords": [
+    "hypercore",
+    "download",
+    "progress"
+  ],
+  "author": "Joseph Werle <joseph.werle@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "hypercore": "^8.2.5",
+    "hypercore-replicate": "^0.3.0",
+    "nyc": "^14.1.1",
+    "pretty-bytes": "^5.3.0",
+    "progress": "^2.0.3",
+    "pump": "^3.0.0",
+    "random-access-memory": "^3.1.1",
+    "tape": "^4.11.0"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "nanoguard": "^1.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/little-core-labs/hypercore-block-progress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/little-core-labs/hypercore-block-progress/issues"
+  },
+  "homepage": "https://github.com/little-core-labs/hypercore-block-progress#readme"
+}

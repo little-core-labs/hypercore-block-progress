@@ -45,8 +45,9 @@ source.ready(() => {
           ctx.bar.update(progress.ratio, ctx)
         },
 
-        onsync() {
+        onsync(progress) {
           console.log('downloading: sync complete')
+          console.log(progress.stats)
         }
       })
     })

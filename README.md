@@ -90,6 +90,13 @@ const progress = capture(feed, {
 })
 ```
 
+<a name="await-capture" /></a>
+### `await capture(feed[, opts])`
+
+The `await` keyword can also be used on the returned instance to wait
+for the download to complete or fail with [`stats`](#progress-stats)
+returned to the awaited caller.
+
 <a name="progress-total" /></a>
 #### `progress.total`
 
@@ -139,6 +146,19 @@ The computed average block download rate.
 Read-only, `JSON.stringify()`, safe plain object view of the statistics
 captured while the feed is downloading.
 
+A stats object may look soemthing like this:
+
+```js
+{ eta: 0,
+  rate: 10.940782122905027,
+  total: 9792,
+  ratio: 1,
+  elapsed: 895,
+  missing: 0,
+  percent: 100,
+  downloaded: 9792 }
+```
+
 <a name="progress-destroy" /></a>
 #### `progress.destroy()`
 
@@ -165,13 +185,6 @@ supplying `opts.onsync` to the [`capture()`](#capture) function.
 Method handler called when a `'download'` event is emitted on `feed` during
 the life time the download is captured. This can be overwritten by
 supplying `opts.onblock` to the [`capture()`](#capture) function.
-
-<a name="await-capture" /></a>
-### `stats = await capture(feed[, opts])`
-
-The `await` keyword can also be used on the returned instance to wait
-for the download to complete or fail with [`stats`](#progress-stats)
-returned to the awaited caller.
 
 ## License
 

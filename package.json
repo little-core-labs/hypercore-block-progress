@@ -1,6 +1,6 @@
 {
   "name": "hypercore-block-progress",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Track the block download progress of a Hypercore feed.",
   "main": "index.js",
   "scripts": {

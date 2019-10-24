@@ -24,7 +24,7 @@
     "tape": "^4.11.0"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "inspect-custom-symbol": "^1.1.0",
     "nanoguard": "^1.2.1"
   },
   "repository": {

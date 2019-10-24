@@ -1,6 +1,3 @@
-const { inspect } = require('util')
-const debug = require('debug')('hypercore-block-progress')
-
 // util
 const bind = (o, f, ...rest) => (...args) => f.call(o, ...args, ...rest)
 
@@ -81,7 +78,7 @@ class Stats {
    * @param {Progress} progress
   */
   constructor(progress) {
-    for (const key in Stats.properties()) {
+    for (const key of Stats.properties()) {
       Object.defineProperty(this, key, {
         get: () => progress[key]
       })
@@ -92,7 +89,7 @@ class Stats {
    * Implements the `util.inspect.custom` symbol for custom
    * output when passing this instance to `console.log()`.
    */
-  [inspect.custom]() {
+  [require('inspect-custom-symbol')]() {
     return this.toJSON()
   }
 
@@ -138,6 +135,7 @@ class Progress {
     this.feed = feed
     this.clock = new Clock()
     this.lastBlock = null
+    this.cancelled = false
     this.destroyed = false
 
     // use function inputs as "magic" getter functions
@@ -175,8 +173,10 @@ class Progress {
    * Implements the `util.inspect.custom` symbol for custom
    * output when passing this instance to `console.log()`.
    */
-  [inspect.custom](depth, opts) {
+  [require('inspect-custom-symbol')](depth, opts) {
     let indent = ''
+    if (!opts) { opts = { stylize: (x) => x } }
+    if (!depth) { depth = 0 }
     while (indent.length < opts.indentationLvl) { indent += ' ' }
     opts.indentationLvl++
     return 'Progress(\n' +
@@ -188,7 +188,7 @@ class Progress {
       `${indent}  elapsed: ${opts.stylize((this.elapsed / 1000).toFixed(1) + 's', 'string')}\n` +
       `${indent}  eta: ${opts.stylize(((this.eta / 1000) || 0).toFixed(1) + 's', 'string')}\n` +
       `${indent}  rate: ${opts.stylize(Math.round(1000*this.rate), 'number')}\n` +
-      `${indent}  hypercore: ${this.feed[inspect.custom](depth, opts)}\n` +
+      `${indent}  hypercore: ${this.feed[require('inspect-custom-symbol')](depth, opts)}\n` +
       `${indent})`
   }
 
@@ -251,7 +251,7 @@ class Progress {
     if (100 === this.percent) {
       return 0
     } else {
-      return this.elapsed * (this.total / this.downloaded - 1)
+      return (this.elapsed * (this.total / this.downloaded - 1)) || 0
     }
   }
 
@@ -277,11 +277,7 @@ class Progress {
    * download.
    * @abstract
    */
-  onerror(err) {
-    if (err) {
-      debug('progress: error:', err.stack || err)
-    }
-  }
+  onerror(err) { void err }
 
   /**
    * Abstract method to handle the 'sync' event emitted on the
@@ -327,37 +323,39 @@ class Progress {
    * @return {Promsie<Stats<Progress>>}
    */
   then(resolve, reject) {
+    console.log('then!!');
     if ('function' !== typeof resolve) {
       resolve = () => Promise.resolve()
     }
 
-    if ('function' !== typeof reject) {
-      reject = (err) => void err
-    }
-
+      const err = new PROGRESS_DESTROYED_ERR()
     if (this.destroyed) {
-      reject(new PROGRESS_DESTROYED_ERR())
-      return Promise.reject(new PROGRESS_DESTROYED_ERR())
+      if ('function' === typeof reject) {
+        return Promise.resolve(reject(err))
+      } else {
+        return Promise.reject(err)
+      }
     }
 
     if (!this.total || this.downloaded < this.total) {
       return new Promise((yep, nope) => {
+        const onerror = (err) => 'function' === typeof reject
+          ? yep(reject(err))
+          : nope(err)
+
+        this.feed.once('error', onerror)
         this.feed.once('sync', () => {
           if (this.destroyed) {
-            nope(new PROGRESS_DESTROYED_ERR())
-            reject(new PROGRESS_DESTROYED_ERR())
-            return
+            return onerror(new PROGRESS_DESTROYED_ERR())
           }
 
-          try { yep(resolve(new Stats(this))) }
-          catch (err) {
-            reject(err)
-            nope(err)
+          try {
+            yep(resolve(new Stats(this)))
+            this.feed.removeListener('error', onerror)
+          } catch (err) {
+            return onerror(err)
           }
         })
-
-        this.feed.once('error', nope)
-        this.feed.once('error', reject)
       })
     }
 
@@ -366,6 +364,17 @@ class Progress {
     } catch (err) {
       return Promise.reject(err)
     }
+  }
+
+  /**
+   * Implements a `catch()` method handle for a `Promise` interface
+   * making errors "catchable".
+   * @protected
+   * @param {?(Function)} reject
+   * @return {Promsie}
+  */
+  catch(reject) {
+    return this.then().catch(reject)
   }
 
   /**
@@ -397,6 +406,7 @@ class Progress {
    * Alias to `progress.close()`
    */
   cancel() {
+    this.cancelled = true
     return this.close()
   }
 }

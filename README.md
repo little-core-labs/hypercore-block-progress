@@ -44,7 +44,7 @@ const progress = capture(feed, {
     // by `capture`
   },
 
-  onerror(err, progress ctx) {
+  onerror(err, progress, ctx) {
     // handle `err`
 
     // ctx` points to `context: { ... }` above

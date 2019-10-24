@@ -83,7 +83,9 @@ const progress = capture(feed, {
   },
 
   onblock(index, data, peer, progress, ctx) {
-    ctx.bar.update(progress.ratio) // or ctx.bar.update(progress.downloaded / progress.total)
+    ctx.bar.update(progress.ratio, {
+      byteLength: ctx.byteLength
+    })
   },
 })
 ```

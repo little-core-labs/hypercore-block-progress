@@ -11,45 +11,23 @@ $ npm install hypercore-block-progress
 
 ## Status
 
-> **Testing/Documentation**
+> **Stable**
 
 ## Usage
 
 ```js
 const capture = require('hypercore-block-progress')
 const progress = capture(feed, {
-  context: {
-    // context variables given to callback handlers
-
-    // compute a dynamic context variable
-    byteLength: (progress, ctx) => progress.feed.byteLength,
-
-    // set a constant context variable
-    key: feed.key,
-  },
-
   // called for every 'download' event on emitted on `feed`
   onblock(index, data, peer, progress, ctx) {
-    // do something with `index`, `data`, and `peer` properties
-
-    // ctx` points to `context: { ... }` above
-    // `progress` is a reference to the `progress` value returned
-    // by `capture`
   },
 
   // called when 'sync' event is emitted on `feed`
   onsync(progress, ctx) {
-    // ctx` points to `context: { ... }` above
-    // `progress` is a reference to the `progress` value returned
-    // by `capture`
   },
 
+  // handle `err`
   onerror(err, progress, ctx) {
-    // handle `err`
-
-    // ctx` points to `context: { ... }` above
-    // `progress` is a reference to the `progress` value returned
-    // by `capture`
   },
 })
 ```

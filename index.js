@@ -309,9 +309,7 @@ class Progress {
    * @private
    */
   ondownload(index, data, peer) {
-    data.index = index
-    data.peer = peer
-    this.lastBlock = data
+    this.lastBlock = Object.assign(data, { index, peer })
   }
 
   /**

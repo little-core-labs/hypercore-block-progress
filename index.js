@@ -323,12 +323,11 @@ class Progress {
    * @return {Promsie<Stats<Progress>>}
    */
   then(resolve, reject) {
-    console.log('then!!');
     if ('function' !== typeof resolve) {
       resolve = () => Promise.resolve()
     }
 
-      const err = new PROGRESS_DESTROYED_ERR()
+    const err = new PROGRESS_DESTROYED_ERR()
     if (this.destroyed) {
       if ('function' === typeof reject) {
         return Promise.resolve(reject(err))

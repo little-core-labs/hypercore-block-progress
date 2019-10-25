@@ -277,7 +277,9 @@ class Progress {
    * download.
    * @abstract
    */
-  onerror(err) { void err }
+  onerror(err) {
+    void err
+  }
 
   /**
    * Abstract method to handle the 'sync' event emitted on the
@@ -287,7 +289,9 @@ class Progress {
    * @param {Progress} self
    * @param {Object} ctx
    */
-  onsync(self, ctx) { }
+  onsync(self, ctx) {
+    void self, ctx
+  }
 
   /**
    * Abstract method to handle the 'download' event emitted on the

@@ -329,8 +329,8 @@ class Progress {
       resolve = () => Promise.resolve()
     }
 
-    const err = new PROGRESS_DESTROYED_ERR()
     if (this.destroyed) {
+      const err = new PROGRESS_DESTROYED_ERR()
       if ('function' === typeof reject) {
         return Promise.resolve(reject(err))
       } else {

@@ -31,6 +31,10 @@ test('progress = capture(feed[,opts])', (t) => {
         t.ok(progress.rate)
         t.ok(progress.stats)
         t.ok(progress.elapsed)
+        t.ok(progress.lastBlock)
+        t.ok(0 === progress.lastBlock.index)
+        t.ok(5 === progress.lastBlock.length)
+        t.ok(progress.lastBlock.peer)
 
         source.close()
         destination.close()
